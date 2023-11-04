@@ -1,5 +1,6 @@
 flask
 fastapi
+uvicorn
 promptcap
 python-decouple
 transformers[torch]
