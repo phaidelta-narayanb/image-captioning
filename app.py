@@ -17,7 +17,7 @@ images, ds_list = {}, []
 
 def load_dataset():
     global images, ds_list
-    for img_set_metadata_file in glob(os.path.join(DATASET_DIR, "/**/*.csv")):
+    for img_set_metadata_file in glob(os.path.join(DATASET_DIR, "**/*.csv")):
         img_set_metadata_file = Path(img_set_metadata_file)
 
         if img_set_metadata_file.parent not in images:
