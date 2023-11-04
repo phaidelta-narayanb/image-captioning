@@ -3,3 +3,6 @@ fastapi
 promptcap
 python-decouple
 transformers[torch]
+torchvision
+Pillow
+python-multipart
