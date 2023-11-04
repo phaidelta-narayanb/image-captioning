@@ -1,0 +1,5 @@
+flask
+fastapi
+promptcap
+python-decouple
+transformers[torch]

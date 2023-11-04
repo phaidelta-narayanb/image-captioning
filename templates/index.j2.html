@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Dataset label</title>
+    </head>
+    <body>
+        <h1>Dataset label</h1>
+        <div>Image index: {{idx}}</div>
+        <div>Image UUID (changes on dataset reload): {{uid}}</div>
+        <form action="" method="POST">
+            <button name="refresh" value="refresh">Refresh dataset</button>
+        </form>
+        <form action="" method="POST">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Caption</th>
+                        <th>Dataset</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span>{{name}}</span><br />
+                            <img style="max-height: 400px; min-height: 320px; min-width: 320px; max-width: 400px;" src="{{image_url}}" /><br />
+                        </td>
+                        <td>
+                            <input type="hidden" name="save_id" value="{{idx}}" />
+                            <div>
+                                <label><input type="checkbox" name="auto_strip" value="1" {{'checked' if do_strip else ''}} />Auto-remove extra spaces (strip)</label><br />
+                                <textarea name="caption" style="width: 400px; height: 400px;">{{caption}}</textarea>
+                            </div>
+                        </td>
+                        <td>
+                            <ol start="0" style="max-height: 400px; overflow-y: scroll; width: 100%;">
+                                {%for item in ds %}
+                                <li id="{{item['uuid'].hex}}" style="width: 100%;">
+                                    {%if item['uuid'] == uid%}
+                                    <span style="font-weight: bold; color: white; background-color: orange; width: 100%; display: inline-block;">
+                                    {%else%}
+                                    <span style="color: blue; width: 100%; display: inline-block;">
+                                    {%endif%}
+                                        <a href="/?go={{item['uuid'].hex}}" style="color: inherit; margin: 0px 8px;">{{item['full_path']}}</a>
+                                    </span>
+                                </li>
+                                {%endfor%}
+                            </ol>
+                            <script>
+                                let sel_elem = document.getElementById("{{uid.hex}}");
+                                if (sel_elem) 
+                                    sel_elem.scrollIntoView();
+                            </script>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            <button name="action" value="save">Save</button>
+                            <button name="action" value="auto_caption">Auto caption</button>
+                            {%if is_saved %}<div style="color: green">Changes saved</div>{%endif%}
+                        </td>
+                        <td>
+                            <button name="action" value="prev">Prev</button>
+                            <button name="action" value="next">Next</button><div>(Auto save)</div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </form>
+    </body>
+</html>
