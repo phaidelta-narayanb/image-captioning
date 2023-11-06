@@ -5,6 +5,7 @@ from flask import Flask, request, render_template, make_response, send_file, red
 from glob import glob
 from pathlib import Path
 from decouple import config
+import requests
 
 
 DATASET_DIR = config("DATASET_DIR", default="./dataset/")
@@ -17,7 +18,7 @@ images, ds_list = {}, []
 
 def load_dataset():
     global images, ds_list
-    for img_set_metadata_file in glob(os.path.join(DATASET_DIR, "**/*.csv")):
+    for img_set_metadata_file in glob(os.path.join(DATASET_DIR, "**/*.csv"), recursive=True):
         img_set_metadata_file = Path(img_set_metadata_file)
 
         if img_set_metadata_file.parent not in images:
@@ -42,13 +43,17 @@ load_dataset()
 def generate_caption(save_id):
     data = ds_list[save_id]
     file = data["full_path"]
-    return "no caption"
+    caption = requests.post(
+        "http://localhost:8000/promptcap",
+        files={"image": open(file, 'rb')}
+    ).json()
+    return caption["caption"]
 
 
 def request_action(idx, action) -> int:
     if action == "prev":
         idx -= 1
-    if action == "next":
+    if action == "next" or action == "auto_caption_next":
         idx += 1
     return idx
 
@@ -114,7 +119,7 @@ def get_index():
         if auto_strip_input:
             new_caption = new_caption.strip()
 
-        if action == "auto_caption":
+        if action == "auto_caption" or action == "auto_caption_next":
             new_caption = generate_caption(save_id)
 
         saved_changes = save_image(save_id, new_caption)
